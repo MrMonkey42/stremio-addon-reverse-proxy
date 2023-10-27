@@ -1,17 +1,17 @@
 const express = require('express')
-const { createProxyMiddleware } = require('http-proxy-middleware')
+const cors = require('cors')
 require('dotenv').config()
 
 const app = express()
 
+app.use(cors())
+
 const apiTarget = process.env.TARGET_URL
 
-// Create a proxy middleware that forwards requests to the target API
-const apiProxy = createProxyMiddleware({ target: apiTarget, changeOrigin: true })
-
-// Use the proxy middleware for all routes
-app.use('/', apiProxy)
+app.use('*', (req, res) => {
+    res.redirect(`${apiTarget}${req.baseUrl}`)
+});
 
 app.listen(process.env.PORT || 55771, () => {
-    console.log(`Started Reverse proxy server at: http://127.0.0.1:${process.env.PORT || 55771}`)
+    console.log(`Started addon server at: http://127.0.0.1:${process.env.PORT || 55771}`)
 })
